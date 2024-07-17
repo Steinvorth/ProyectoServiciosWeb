@@ -10,29 +10,35 @@ namespace ProjectoFinalServiciosWeb.Controllers
     [ApiController]
     public class PurisFlashController : ControllerBase
     {
-        // Datos de memoria mientras implementamos el SQL.
+        // In-memory data storage for demonstration purposes
         private static List<Comida> comidas = new List<Comida>
         {
-            new Comida { Id = 1, Nombre = "Pizza", Descripcion = "Delicious cheese pizza", Precio = "10.99", Categoria = 1 },
-            new Comida { Id = 2, Nombre = "Burger", Descripcion = "Juicy beef burger", Precio = "8.99", Categoria = 1 }
+            new Comida { Id = 1, Nombre = "Pizza", Descripcion = "Pizza de Jamon y queso", Precio = "5,000", Categoria = 1 },
+            new Comida { Id = 2, Nombre = "Hamburguesa", Descripcion = "Queso Burguesa", Precio = "950", Categoria = 2 }
         };
 
         private static List<Pedido> pedidos = new List<Pedido>
         {
-            new Pedido { Id = 1, Fecha = "2024-07-16", Hora = "12:00", Estado = "Delivered", Direccion = "123 Main St", MetodoPago = "Credit Card", Total = "19.98", UsuarioId = "1", ConductorId = "1" },
-            new Pedido { Id = 2, Fecha = "2024-07-16", Hora = "12:30", Estado = "Pending", Direccion = "456 Elm St", MetodoPago = "PayPal", Total = "15.99", UsuarioId = "2", ConductorId = "2" }
+            new Pedido { Id = 1, Fecha = "2024-07-16", Hora = "12:00", Estado = "Entregada", Direccion = "Calle 123", MetodoPago = "Tarjeta", Total = "5,850", UsuarioId = "1", ConductorId = "1" },
+            new Pedido { Id = 2, Fecha = "2024-07-16", Hora = "12:30", Estado = "Pendiente", Direccion = "Calle 456", MetodoPago = "Efectivo", Total = "1,100", UsuarioId = "2", ConductorId = "2" }
         };
 
         private static List<Usuario> usuarios = new List<Usuario>
         {
-            new Usuario { Id = 1, Nombre = "John", Apellido = "Doe", Correo = "john.doe@example.com", Contrasena = "password", Telefono = "1234567890", Direccion = "123 Main St", MetodoPago = "Credit Card" },
-            new Usuario { Id = 2, Nombre = "Jane", Apellido = "Doe", Correo = "jane.doe@example.com", Contrasena = "password", Telefono = "0987654321", Direccion = "456 Elm St", MetodoPago = "PayPal" }
+            new Usuario { Id = 1, Nombre = "Pedro", Apellido = "Picapiedra", Correo = "piedra@gmail.com", Contrasena = "password", Telefono = "1234567890", Direccion = "Calle 123", MetodoPago = "Tarjeta" },
+            new Usuario { Id = 2, Nombre = "Sofia", Apellido = "Ruiz", Correo = "sofiaruiz@gmail.com", Contrasena = "password", Telefono = "0987654321", Direccion = "Calle 456", MetodoPago = "Efectivo" }
         };
 
         private static List<Conductor> conductores = new List<Conductor>
         {
-            new Conductor { Id = 1, Nombre = "Mike", Apellido = "Smith", Telefono = "1112223333", Vehiculo = "Car" },
-            new Conductor { Id = 2, Nombre = "Sara", Apellido = "Johnson", Telefono = "4445556666", Vehiculo = "Bike" }
+            new Conductor { Id = 1, Nombre = "Jeremy", Apellido = "Perez", Telefono = "1112223333", Vehiculo = "Bicicleta" },
+            new Conductor { Id = 2, Nombre = "Esteban", Apellido = "Yen", Telefono = "4445556666", Vehiculo = "Moto" }
+        };
+
+        private static List<Categoria> categorias = new List<Categoria>
+        {
+            new Categoria { Id = 1, TipoCategoria = "Italiana" },
+            new Categoria { Id = 2, TipoCategoria = "Comida Rapida" }
         };
 
         /*
@@ -78,6 +84,12 @@ namespace ProjectoFinalServiciosWeb.Controllers
             return Ok(conductores);
         }
 
+        [HttpGet("listCategorias")]
+        public ActionResult<IEnumerable<Categoria>> GetCategorias()
+        {
+            return Ok(categorias);
+        }
+
         /*
          *  POST REQUESTS
         */
@@ -101,6 +113,13 @@ namespace ProjectoFinalServiciosWeb.Controllers
         {
             usuarios.Add(usuario);
             return Ok(usuario);
+        }
+
+        [HttpPost("addCategoria")]
+        public ActionResult<Categoria> AddCategoria(Categoria categoria)
+        {
+            categorias.Add(categoria);
+            return Ok(categoria);
         }
 
         /*
@@ -165,6 +184,20 @@ namespace ProjectoFinalServiciosWeb.Controllers
             return Ok(usuario);
         }
 
+        [HttpPut("updateCategoria/{id}")]
+        public ActionResult<Categoria> UpdateCategoria(int id, Categoria updatedCategoria)
+        {
+            var categoria = categorias.FirstOrDefault(c => c.Id == id);
+            if (categoria == null)
+            {
+                return NotFound();
+            }
+
+            categoria.TipoCategoria = updatedCategoria.TipoCategoria;
+
+            return Ok(categoria);
+        }
+
         /*
          *  DELETE REQUESTS
         */
@@ -205,6 +238,19 @@ namespace ProjectoFinalServiciosWeb.Controllers
             }
 
             usuarios.Remove(usuario);
+            return Ok();
+        }
+
+        [HttpDelete("deleteCategoria/{id}")]
+        public ActionResult DeleteCategoria(int id)
+        {
+            var categoria = categorias.FirstOrDefault(c => c.Id == id);
+            if (categoria == null)
+            {
+                return NotFound();
+            }
+
+            categorias.Remove(categoria);
             return Ok();
         }
     }
